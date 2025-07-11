@@ -18,8 +18,10 @@ router.post("/", async (req, res) => {
     const { userId } = req.auth(); // Get userId from the authenticated session
     const { title, content, description } = req.body;
 
-    if (!title || !content) {
-      return res.status(400).json({ error: "Title and content are required." });
+    if (!title || !description) {
+      return res
+        .status(400)
+        .json({ error: "Title and description are required." });
     }
 
     const now = new Date().toISOString();
