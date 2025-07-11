@@ -134,4 +134,30 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+/**
+ * @route   GET /api/notes/:id
+ * @desc    Get a single note by its ID
+ * @access  Private (Authenticated)
+ */
+router.get('/:id', async (req, res) => {
+  try {
+      const { userId } = req.auth();
+      const { id: noteId } = req.params;
+
+      const note = await databases.getDocument(databaseId, collectionId, noteId);
+
+      if (note.userId !== userId) {
+          return res.status(403).json({ error: 'Forbidden: You do not have permission to view this note.' });
+      }
+
+      res.status(200).json(note);
+  } catch (error) {
+      console.error('Error fetching single note:', error);
+      if (error.code === 404) {
+           return res.status(404).json({ error: 'Note not found.' });
+      }
+      res.status(500).json({ error: 'Failed to fetch note.' });
+  }
+});
+
 module.exports = router;
